@@ -49,4 +49,9 @@ async def prediction_route(request: Request, file: UploadFile):
     heatmap_path = os.path.abspath(os.path.join(base_directory, "temp", "output.png"))
     (prediction, heatmap_path) = predictor_model.predict(uploaded_path, heatmap_path)
 
-    return templates.TemplateResponse("prediction.html", {"request": request, "predicted": prediction, "image_name": "output.png"})
+    return templates.TemplateResponse("prediction.html", {
+      "request": request,
+      "predicted": prediction,
+      "original_image": "uploaded.png",
+      "filtered_image": "output.png"
+    })
