@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Sistem Klasifikasi Penyakit pada Padi</title>
+
+  <link rel="stylesheet" href="{{ url_for('assets', path='bulma.css') }}">
+</head>
+
+<body>
+  <section class="section">
+    <!-- Boxed, Centered Form -->
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-half">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+    </div>
+    <!-- End Boxed, Centered Form -->
+  </section>
+
+  <script>
+    // style input file
+    const fileInput = document.querySelector('#file-upload-div input[type=file]');
+    fileInput.onchange = () => {
+      if (fileInput.files.length > 0) {
+        const fileName = document.querySelector('#file-upload-div .file-name');
+        fileName.textContent = fileInput.files[0].name;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Functions to open and close a modal
+      function openModal($el) {
+        $el.classList.add('is-active');
+      }
+
+      function closeModal($el) {
+        $el.classList.remove('is-active');
+      }
+
+      function closeAllModals() {
+        (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+          closeModal($modal);
+        });
+      }
+
+      // Add a click event on buttons to open a specific modal
+      document.getElementById("submit-btn").onclick = () => {
+        // check whether a file is selected
+        if (fileInput.files.length === 0) {
+          openModal(document.getElementById("no-file-selected-modal"));
+          return;
+        }
+
+        // submit the form
+        document.getElementById("main-form").submit();
+      }
+
+      // Add a click event on various child elements to close the parent modal
+      (document.querySelectorAll(
+          '.modal-background, .modal-close, .modal-close-2, .modal-card-head .delete, .modal-card-foot .button') ||
+        []).forEach((
+        $close) => {
+        const $target = $close.closest('.modal');
+
+        $close.addEventListener('click', () => {
+          closeModal($target);
+        });
+      });
+
+      // Add a keyboard event to close all modals
+      document.addEventListener('keydown', (event) => {
+        const e = event || window.event;
+
+        if (e.keyCode === 27) { // Escape key
+          closeAllModals();
+        }
+      });
+    });
+
+  </script>
+</body>
+
+<!--
+  Path: app/templates/index.html
+  Made with ❤️
+
+  Sources:
+  - https://bulma.io
+  - https://css.gg
+  - https://unsplash.com/photos/4Fzp6z40Jhs
+-->
+
+</html>

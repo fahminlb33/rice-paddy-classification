@@ -1,0 +1,40 @@
+{% extends 'partial_layout.html' %}
+{% block content %}
+<!-- Main Card Content -->
+<div class="card">
+  <!-- Header Image -->
+  <div class="card-image">
+    <figure class="image is-5by3">
+      <img src="{{ url_for('temp', path=image_name) }}" alt="Predicted image">
+    </figure>
+  </div>
+  <!-- End Header Image -->
+
+  <!-- Main Content -->
+  <div class="card-content">
+    <!-- Header Title -->
+    {% include 'partial_title.html' %}
+    <!-- End Header Title -->
+
+    <!-- Form -->
+    <div class="content">
+      <form action="/prediction" method="post" enctype="multipart/form-data">
+        <!-- Result -->
+        <p class="has-text-centered mb-1">Hasil Prediksi:</p>
+        <p
+          class="has-text-centered is-size-1 is-uppercase has-text-weight-semibold has-background-danger-dark has-text-danger-light mb-5">
+          {{ predicted }}
+        </p>
+        <!-- End Result -->
+
+        <!-- Submit Button -->
+        <a class="button is-large is-fullwidth is-link" href="/">&larr; Kembali</a>
+        <!-- End Submit Button -->
+      </form>
+    </div>
+    <!-- End Form -->
+  </div>
+  <!-- End Main Content -->
+</div>
+<!-- End Main Card Content -->
+{% endblock %}
