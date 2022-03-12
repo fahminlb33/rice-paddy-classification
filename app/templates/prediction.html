@@ -4,9 +4,27 @@
 <div class="card">
   <!-- Header Image -->
   <div class="card-image">
-    <figure class="image is-5by3">
-      <img src="{{ url_for('temp', path=image_name) }}" alt="Predicted image">
-    </figure>
+    <div class="columns is-gapless">
+      <div class="column">
+        <p class="has-text-centered has-text-weight-medium my-2">Citra Asli</p>
+        <a href="{{ url_for('temp', path=filtered_image) }}" data-lightbox="original-image" data-title="Citra Asli">
+          <figure class="image is-5by3">
+            <img src="{{ url_for('temp', path=original_image) }}" alt="Origial image">
+          </figure>
+        </a>
+      </div>
+      <div class="column">
+        <p class="has-text-centered has-text-weight-medium my-2">Citra Grad-CAM</p>
+        <a href="{{ url_for('temp', path=filtered_image) }}" data-lightbox="predicted-image"
+          data-title="Citra Grad-CAM">
+          <figure class="image is-5by3">
+            <img src="{{ url_for('temp', path=filtered_image) }}" alt="Predicted image">
+          </figure>
+        </a>
+      </div>
+    </div>
+
+
   </div>
   <!-- End Header Image -->
 
