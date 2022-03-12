@@ -56,3 +56,14 @@
 </div>
 <!-- End Main Card Content -->
 {% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('assets', path='vendor/lightbox/js/lightbox-plus-jquery.min.js') }}"></script>
+<script>
+  // lightbox
+  lightbox.option({
+    resizeDuration: 200
+  });
+
+</script>
+{% endblock %}
