@@ -30,13 +30,13 @@ class PredictorModel:
     # Then, we compute the gradient of the top predicted class for our input image
     # with respect to the activations of the last conv layer
     with tf.GradientTape() as tape:
-        last_conv_layer_output, preds = grad_model(img_array)
-        pred_index = tf.argmax(preds[0])
-        class_channel = preds[:, pred_index]
+        last_conv_layer_logits, dense_output_logits = grad_model(img_array)
+        pred_index = tf.argmax(dense_output_logits[0])
+        loss_value = dense_output_logits[:, pred_index]
 
         # This is the gradient of the output neuron (top predicted or chosen)
         # with regard to the output feature map of the last conv layer
-        grads = tape.gradient(class_channel, last_conv_layer_output)
+        grads = tape.gradient(loss_value, last_conv_layer_logits)
 
         # This is a vector where each entry is the mean intensity of the gradient
         # over a specific feature map channel
@@ -45,8 +45,7 @@ class PredictorModel:
         # We multiply each channel in the feature map array
         # by "how important this channel is" with regard to the top predicted class
         # then sum all the channels to obtain the heatmap class activation
-        last_conv_layer_output = last_conv_layer_output[0]
-        heatmap = last_conv_layer_output @ pooled_grads[..., tf.newaxis]
+        heatmap = tf.matmul(last_conv_layer_logits[0], pooled_grads[..., tf.newaxis])
         heatmap = tf.squeeze(heatmap)
 
         # For visualization purpose, we will also normalize the heatmap between 0 & 1
