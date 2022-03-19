@@ -7,15 +7,16 @@ from PIL import Image
 import matplotlib.pyplot as plt
 
 import tensorflow as tf
+from tensorflow.keras.models import Model, load_model
 
 class PredictorModel:
-  tf_model: tf.keras.models.Model = None
+  tf_model: Model = None
   class_names: List[str] = None
   initialized: bool = False
-  IMG_SIZE: tuple[int, int] = (160, 160)
+  IMG_SIZE: Tuple[int, int] = (160, 160)
 
   def load_model(self, model_root: str, tf_name: str, class_name: str) -> None:
-    self.tf_model = tf.keras.models.load_model(os.path.join(model_root, tf_name))
+    self.tf_model = load_model(os.path.join(model_root, tf_name))
     self.class_names = joblib.load(os.path.join(model_root, class_name))
     self.initialized = True
 
@@ -23,7 +24,7 @@ class PredictorModel:
     # First, we create a model that maps the input image to the activations
     # of the last conv layer as well as the output predictions
     convLayer = self.tf_model.get_layer(last_conv_layer_name).output
-    grad_model = tf.keras.models.Model(
+    grad_model = Model(
         [self.tf_model.inputs], [convLayer, self.tf_model.output]
     )
 
