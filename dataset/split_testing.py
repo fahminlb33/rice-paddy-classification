@@ -5,7 +5,7 @@ import numpy as np
 
 
 mode_percentages = [("test", 0.1), ("validation", 0.1)]
-class_names = ["Bacterialblight", "Blast", "Brownspot", "Tungro"]
+class_names = ["Bacterialblight", "Blast", "Brownspot", "Tungro", "Healthy"]
 
 # count files for each class
 # class_counts = {class_name: len(glob.glob("train/{}/*.jpg".format(class_name))) for class_name in class_names}

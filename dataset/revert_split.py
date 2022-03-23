@@ -1,13 +1,13 @@
 import os
 import glob
 
-class_names = ["Bacterialblight", "Blast", "Brownspot", "Tungro"]
+class_names = ["Bacterialblight", "Blast", "Brownspot", "Tungro", "Healthy"]
 counter = {class_name: 0 for class_name in class_names}
 
 for mode in ["test", "validation"]:
     for current_class in class_names:
         # get files for current class
-        current_files = glob.glob("{}/{}/*.jpg".format(mode, current_class))
+        current_files = glob.glob("{}/{}/*.*".format(mode, current_class))
 
         # crate train folder if not exists
         train_folder = "train/{}".format(current_class)
