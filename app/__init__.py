@@ -13,8 +13,10 @@ CLASS_FILENAME = os.environ.get("CLASS_NAME", "class_names.z")
 
 # get base directory relative to this file
 base_directory = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.abspath(os.path.join(base_directory, "model"))
 temp_path = os.path.abspath(os.path.join(base_directory, "temp"))
+model_path = os.path.abspath(os.path.join(base_directory, "model"))
+assets_path = os.path.abspath(os.path.join(base_directory, "assets"))
+template_path = os.path.abspath(os.path.join(base_directory, "templates"))
 
 # create predictor instance
 predictor_model = PredictorModel()
@@ -26,14 +28,18 @@ predictor_model.load_model(model_path, MODEL_FILENAME, CLASS_FILENAME)
 app = FastAPI()
 
 # init templates
-templates = Jinja2Templates(
-    directory=os.path.join(base_directory, "templates"))
+templates = Jinja2Templates(directory=template_path)
 
 # init static files
-app.mount("/assets", StaticFiles(directory=os.path.join(base_directory,
-          "assets")), name="assets")
-app.mount(
-    "/temp", StaticFiles(directory=os.path.join(base_directory, "temp")), name="temp")
+app.mount("/temp", StaticFiles(directory=temp_path), name="temp")
+app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
+
+
+def get_css_for_prediction(prediction: str) -> str:
+    if "HEALTHY" in prediction.upper():
+        return "has-background-success-dark has-text-success-light"
+    else:
+        return "has-background-danger-dark has-text-danger-light"
 
 # --- routes ---
 
@@ -46,20 +52,20 @@ async def index_route(request: Request):
 @app.post("/prediction", response_class=HTMLResponse)
 async def prediction_route(request: Request, file: UploadFile):
     # save file to temp directory
-    uploaded_path = os.path.abspath(os.path.join(temp_path, file.filename))
+    uploaded_path = os.path.join(temp_path, file.filename)
     async with aiofiles.open(uploaded_path, 'wb') as temp_stream:
         content = await file.read()
         await temp_stream.write(content)
 
     # make prediction
-    heatmap_path = os.path.abspath(os.path.join(
-        temp_path, "gradcam-" + file.filename))
+    heatmap_path = os.path.join(temp_path, "gradcam-" + file.filename)
     (prediction, heatmap_path) = predictor_model.predict(
         uploaded_path, heatmap_path)
 
     return templates.TemplateResponse("prediction.html", {
         "request": request,
         "predicted": prediction,
+        "background_css": get_css_for_prediction(prediction),
         "original_image": os.path.basename(uploaded_path),
         "filtered_image": os.path.basename(heatmap_path)
     })
