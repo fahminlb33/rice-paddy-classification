@@ -2,6 +2,7 @@
 .gitignore
 conda-env.yaml
 
+model
 dataset
 notebooks
 __pycache__
