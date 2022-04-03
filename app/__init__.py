@@ -8,12 +8,12 @@ from fastapi.templating import Jinja2Templates
 
 from app.predictor import PredictorModel
 
-MODEL_FILENAME = "mobilenet-20220312-062819"
-CLASS_FILENAME = "class_names-20220312-062819.z"
+MODEL_FILENAME = os.environ.get("MODEL_NAME", "mobilenet-20220326-173030.h5")
+CLASS_FILENAME = os.environ.get("CLASS_NAME", "class_names-20220326-173030.z")
 
 # get base directory relative to this file
 base_directory = os.path.dirname(os.path.abspath(__file__))
-model_path = os.path.abspath(os.path.join(base_directory, "..", "model"))
+model_path = os.path.abspath(os.path.join(base_directory, "..", "deploy"))
 
 # create predictor instance
 predictor_model = PredictorModel()
