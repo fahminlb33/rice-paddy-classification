@@ -14,4 +14,4 @@ COPY ./app /workdir/app
 COPY ./${MODEL_NAME} /workdir/app/model/tensorflow.h5
 COPY ./${CLASS_NAME} /workdir/app/model/class_names.z
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "80"]
