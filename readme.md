@@ -1,8 +1,7 @@
 # Skripsi
 
-Akses aplikasi: [Klik disini](http://skripsi.kodesiana.com/)
-
-CI/CD status: [![Docker Publish](https://github.com/fahminlb33/skripsi/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/fahminlb33/skripsi/actions/workflows/docker-publish.yml)
+[![Aplikasi Web](https://img.shields.io/badge/Akses-Aplikasi-brightgreen)](https://skripsi.kodesiana.com)
+[![Docker Publish](https://github.com/fahminlb33/skripsi/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/fahminlb33/skripsi/actions/workflows/docker-publish.yml)
 
 > Klasifikasi Penyakit pada Tumbuhan Padi menggunakan Transfer Learning
 > MobileNetV2 Terbantu Gradient-weighted Class Activation Mapping (Grad-CAM)
