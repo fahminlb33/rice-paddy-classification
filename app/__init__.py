@@ -52,20 +52,22 @@ async def index_route(request: Request):
 @app.post("/prediction", response_class=HTMLResponse)
 async def prediction_route(request: Request, file: UploadFile):
     # save file to temp directory
-    uploaded_path = os.path.join(temp_path, file.filename)
+    _, file_extension = os.path.splitext(file.filename)
+    uploaded_path = os.path.join(temp_path, "uploaded" + file_extension)
+
     async with aiofiles.open(uploaded_path, 'wb') as temp_stream:
         content = await file.read()
         await temp_stream.write(content)
 
     # make prediction
-    heatmap_path = os.path.join(temp_path, "gradcam-" + file.filename)
-    (prediction, heatmap_path) = predictor_model.predict(
-        uploaded_path, heatmap_path)
+    (prediction, heatmap_path, heatmap_imposed_path, masked_img) = predictor_model.predict(uploaded_path, temp_path)
 
     return templates.TemplateResponse("prediction.html", {
         "request": request,
         "predicted": prediction,
         "background_css": get_css_for_prediction(prediction),
         "original_image": os.path.basename(uploaded_path),
-        "filtered_image": os.path.basename(heatmap_path)
+        "heatmap_image": os.path.basename(heatmap_path),
+        "heatmap_imposed_image": os.path.basename(heatmap_imposed_path),
+        "masked_image": os.path.basename(masked_img)
     })
