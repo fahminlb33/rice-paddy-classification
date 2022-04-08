@@ -181,4 +181,8 @@ model/
 notebooks/logs
 
 # Temporary files
-app/temp/*.png
+!app/temp/*.gitkeep
+app/temp/*
+
+# VSCode Settings
+.vscode/
