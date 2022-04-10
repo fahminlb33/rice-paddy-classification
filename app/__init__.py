@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.predictor import PredictorModel
+from app.common_helpers import is_file_allowed
 
 MODEL_FILENAME = os.environ.get("MODEL_NAME", "tensorflow.h5")
 CLASS_FILENAME = os.environ.get("CLASS_NAME", "class_names.z")
@@ -51,23 +52,38 @@ async def index_route(request: Request):
 
 @app.post("/prediction", response_class=HTMLResponse)
 async def prediction_route(request: Request, file: UploadFile):
-    # save file to temp directory
+    # create temporary directory
     _, file_extension = os.path.splitext(file.filename)
     uploaded_path = os.path.join(temp_path, "uploaded" + file_extension)
 
+    # check file extension
+    if not is_file_allowed(file_extension):
+        return templates.TemplateResponse("error.html",
+            {
+                "request": request,
+                "error_message": "File extension not allowed",
+                "css_class": "has-background-danger-dark has-text-danger-light",
+            },
+        )
+
+    # save file to temp directory
     async with aiofiles.open(uploaded_path, 'wb') as temp_stream:
         content = await file.read()
         await temp_stream.write(content)
 
+    # resize image to maximum of MAX_HEIGHT
+    resized_path = predictor_model.constrain_image_size(uploaded_path)
+
     # make prediction
-    (prediction, heatmap_path, heatmap_imposed_path, masked_img) = predictor_model.predict(uploaded_path, temp_path)
+    (prediction, heatmap_path, superimposed_path, masked_path) \
+        = predictor_model.predict(resized_path, temp_path)
 
     return templates.TemplateResponse("prediction.html", {
         "request": request,
         "predicted": prediction,
         "background_css": get_css_for_prediction(prediction),
-        "original_image": os.path.basename(uploaded_path),
+        "original_image": os.path.basename(resized_path),
         "heatmap_image": os.path.basename(heatmap_path),
-        "heatmap_imposed_image": os.path.basename(heatmap_imposed_path),
-        "masked_image": os.path.basename(masked_img)
+        "superimposed_image": os.path.basename(superimposed_path),
+        "masked_image": os.path.basename(masked_path)
     })
