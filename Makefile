@@ -1,18 +1,29 @@
 # Variables
 MODEL_NAME=deploy/mobilenet-20220326-151658.h5
 CLASS_NAME=deploy/class_names-20220326-151658.z
-IMAGE_NAME=skripsi:latest
 
-.PHONY: run docker-build docker-run
+IMAGE_REPO=fahminlb33
+IMAGE_TAG=latest
+IMAGE_NAME=skripsi
+IMAGE_FULLNAME=${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+
+# Directives
+.PHONY: run docker-build docker-run docker-stop docker-rm
 
 .DEFAULT_GOAL := docker-run
 
+# Commands
 run:
 	MODEL_NAME="../../${MODEL_NAME}" CLASS_NAME="../../${CLASS_NAME}" uvicorn app:app --port 8080 --reload
 
 docker-build:
-	docker build --build-arg MODEL_NAME="${MODEL_NAME}" --build-arg CLASS_NAME="${CLASS_NAME}" -t ${IMAGE_NAME} .
+	docker build --build-arg MODEL_NAME="${MODEL_NAME}" --build-arg CLASS_NAME="${CLASS_NAME}" -t ${IMAGE_FULLNAME} .
 
-docker-run:
+docker-run: docker-stop docker-rm docker-build
+	docker run --name skripsi -d -p 8080:80 ${IMAGE_FULLNAME}
+
+docker-stop:
+	-docker stop skripsi
+
+docker-rm: docker-stop
 	-docker rm -f skripsi
-	docker run --name skripsi -d -p '8080:80' ${IMAGE_NAME}
