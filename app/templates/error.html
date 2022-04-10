@@ -1,0 +1,32 @@
+{% extends 'partial_layout.html' %}
+{% block content %}
+<!-- Main Card Content -->
+<div class="card">
+  <!-- Main Content -->
+  <div class="card-content">
+    <!-- Header Title -->
+    {% include 'partial_title.html' %}
+    <!-- End Header Title -->
+
+    <!-- Form -->
+    <div class="content">
+      <form action="/prediction" method="post" enctype="multipart/form-data">
+        <!-- Result -->
+        <p class="has-text-centered mb-1">ERROR!</p>
+        <p
+          class="has-text-centered is-uppercase has-text-weight-semibold mb-5 {{ background_css }}">
+          {{ error_message }}
+        </p>
+        <!-- End Result -->
+
+        <!-- Back Button -->
+        <a class="button is-large is-fullwidth is-link" href="/">&larr; Kembali</a>
+        <!-- End Back Button -->
+      </form>
+    </div>
+    <!-- End Form -->
+  </div>
+  <!-- End Main Content -->
+</div>
+<!-- End Main Card Content -->
+{% endblock %}
