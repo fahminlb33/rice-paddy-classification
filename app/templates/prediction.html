@@ -15,9 +15,9 @@
       </div>
       <div class="column">
         <p class="has-text-centered has-text-weight-medium my-2">Citra Grad-CAM</p>
-        <a href="{{ url_for('temp', path=heatmap_imposed_image) }}" data-lightbox="predicted-image" data-title="Citra Grad-CAM">
+        <a href="{{ url_for('temp', path=superimposed_image) }}" data-lightbox="predicted-image" data-title="Citra Grad-CAM">
           <figure class="image is-5by3">
-            <img src="{{ url_for('temp', path=heatmap_imposed_image) }}" alt="Predicted image">
+            <img src="{{ url_for('temp', path=superimposed_image) }}" alt="Predicted image">
           </figure>
         </a>
         <a href="{{ url_for('temp', path=masked_image) }}" data-lightbox="predicted-image" data-title="Citra Asli dipotong Heatmap"></a>
