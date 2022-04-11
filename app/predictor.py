@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import Tuple, List
 
@@ -12,12 +13,16 @@ import tensorflow as tf
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.preprocessing.image import load_img, array_to_img, img_to_array
 
-class PredictorModel:
+class PredictorService:
     MAX_HEIGHT: int = 800
     tf_model: Model = None
     class_names: List[str] = None
     initialized: bool = False
     IMG_SIZE: Tuple[int, int] = (160, 160)
+    logger: logging.Logger
+
+    def __init__(self) -> None:
+        logger = logging.getLogger("PredictorService")
 
     def load_model(self, model_root: str, tf_name: str, class_name: str) -> None:
         # create model path using absolute path
@@ -136,26 +141,31 @@ class PredictorModel:
             raise Exception("Predictor model not initialized")
 
         # make prediction and get Grad-CAM
+        self.logger.info(f"Running prediction using TensorFlow...")
         (predicted, gradcam) = self.classify_and_gradcam(image_path)
 
         # load original image
+        self.logger.info(f"Loading original image...")
         original_img = load_img(image_path)
         original_img = img_to_array(original_img)
         image_size = (original_img.shape[0], original_img.shape[1])
 
         # create base heatmap using colormap
+        self.logger.info(f"Creating heatmap from Grad-CAM...")
         heatmap_path = os.path.join(output_path, "heatmap.jpg")
         heatmap_arr = self.create_heatmap_from_gradcam(gradcam, image_size)
         heatmap_img = array_to_img(heatmap_arr)
         heatmap_img.save(heatmap_path)
 
         # superimpose the heatmap on original image
+        self.logger.info(f"Creating superimposed image using heatmap...")
         superimposed_path = os.path.join(output_path, "superimposed.jpg")
         superimposed_arr = self.superimpose(original_img, heatmap_arr, alpha=1.0)
         superimposed_img = array_to_img(superimposed_arr)
         superimposed_img.save(superimposed_path)
 
         # superimpose the heatmap on original image with mask
+        self.logger.info(f"Creating superimposed image with mask using heatmap...")
         masked_path = os.path.join(output_path, "masked.jpg")
         masked_arr = self.mask_superimpose(original_img, heatmap_arr)
         masked_img = array_to_img(masked_arr)

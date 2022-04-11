@@ -1,4 +1,5 @@
 import os
+import logging
 
 import aiofiles
 from fastapi import FastAPI, Request, UploadFile
@@ -6,11 +7,19 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from app.predictor import PredictorModel
-from app.common_helpers import is_file_allowed
+from app.predictor import PredictorService
+from app.common_helpers import init_logger, is_file_allowed
 
+# initialize logger
+init_logger()
+logger = logging.getLogger("main")
+
+# get model name
 MODEL_FILENAME = os.environ.get("MODEL_NAME", "tensorflow.h5")
 CLASS_FILENAME = os.environ.get("CLASS_NAME", "class_names.z")
+
+logger.debug(f"MODEL_FILENAME: {MODEL_FILENAME}")
+logger.debug(f"CLASS_FILENAME: {CLASS_FILENAME}")
 
 # get base directory relative to this file
 base_directory = os.path.dirname(os.path.abspath(__file__))
@@ -20,9 +29,9 @@ assets_path = os.path.abspath(os.path.join(base_directory, "assets"))
 template_path = os.path.abspath(os.path.join(base_directory, "templates"))
 
 # create predictor instance
-predictor_model = PredictorModel()
+predictor_model = PredictorService()
 
-print("Loading model from:", model_path)
+logger.info(f"Loading model from: {model_path}")
 predictor_model.load_model(model_path, MODEL_FILENAME, CLASS_FILENAME)
 
 # init fastapi
@@ -44,7 +53,6 @@ def get_css_for_prediction(prediction: str) -> str:
 
 # --- routes ---
 
-
 @app.get("/", response_class=HTMLResponse)
 async def index_route(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
@@ -58,6 +66,7 @@ async def prediction_route(request: Request, file: UploadFile):
 
     # check file extension
     if not is_file_allowed(file_extension):
+        logger.warning(f"File extension not allowed: {file_extension}")
         return templates.TemplateResponse("error.html",
             {
                 "request": request,
@@ -71,13 +80,20 @@ async def prediction_route(request: Request, file: UploadFile):
         content = await file.read()
         await temp_stream.write(content)
 
+    # get file size
+    file_size = os.path.getsize(uploaded_path)
+    logger.info(f"Uploaded file size: {file_size}")
+
     # resize image to maximum of MAX_HEIGHT
+    logger.info(f"Constraining uploaded image size...")
     resized_path = predictor_model.constrain_image_size(uploaded_path)
 
     # make prediction
+    logger.info(f"Running prediction...")
     (prediction, heatmap_path, superimposed_path, masked_path) \
         = predictor_model.predict(resized_path, temp_path)
 
+    logger.info(f"Prediction: {prediction}")
     return templates.TemplateResponse("prediction.html", {
         "request": request,
         "predicted": prediction,
