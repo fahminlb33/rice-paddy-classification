@@ -51,7 +51,7 @@ class PredictorModel:
 
         return new_path
 
-    def create_gradcam_matrix(self, img_array, last_conv_layer_name="Conv_1", pred_index=None):
+    def create_gradcam_matrix(self, img_array: np.ndarray, last_conv_layer_name="Conv_1") -> np.ndarray:
         # create model to output the last convolutional layer
         convLayer = self.tf_model.get_layer(last_conv_layer_name).output
         grad_model = tf.keras.models.Model(
@@ -76,20 +76,26 @@ class PredictorModel:
 
             return heatmap.numpy()
 
-    def create_heatmap_from_gradcam(self, heatmap, image_size):
+    def create_heatmap_from_gradcam(self, heatmap: np.ndarray, image_size: Tuple[int, int]) -> np.ndarray:
         # use RGB values of the colormap
         nipy_cm = plt.cm.get_cmap("nipy_spectral")
         nipy_colors = nipy_cm(np.arange(256))[:, :3]
         heatmap_cm = nipy_colors[heatmap] * 255
 
         # create an image with RGB colorized heatmap
-        return resize(heatmap_cm, image_size, anti_aliasing=True)
+        resized = resize(heatmap_cm, image_size, anti_aliasing=True)
+        resized = resized.astype(np.uint8)
 
-    def superimpose(self, original_img, heatmap, alpha=0.4):
+        return resized
+
+    def superimpose(self, original_img: np.ndarray, heatmap: np.ndarray, alpha=0.4) -> np.ndarray:
         # apply heatmap on top of original image
-        return heatmap * alpha + original_img
+        result = heatmap * alpha + original_img
+        result = result.astype(np.uint8)
 
-    def mask_superimpose(self, original_img, heatmap):
+        return result
+
+    def mask_superimpose(self, original_img: np.ndarray, heatmap: np.ndarray) -> np.ndarray:
         # median thresholding
         threshold_level = np.median(heatmap)
         heatmap_mask = heatmap[:, :, 0] < threshold_level
@@ -100,9 +106,14 @@ class PredictorModel:
 
         # use bitwise or to mask original image
         base_img = original_img.astype(int)
-        return np.bitwise_or(heatmap_mask[:, :, np.newaxis], base_img)
 
-    def classify_and_gradcam(self, image_path: str):
+        # apply mask
+        masked = np.bitwise_or(heatmap_mask[:, :, np.newaxis], base_img)
+        masked = masked.astype(np.uint8)
+
+        return masked
+
+    def classify_and_gradcam(self, image_path: str) -> Tuple[int, np.ndarray]:
         # load image
         image_tensor = load_img(image_path, target_size=self.IMG_SIZE)
         image_tensor = img_to_array(image_tensor)
@@ -120,7 +131,7 @@ class PredictorModel:
 
         return (prediction[0], gradcam)
 
-    def predict(self, image_path: str, output_path: str) -> Tuple[str, str]:
+    def predict(self, image_path: str, output_path: str) -> Tuple[str, str, str, str]:
         if not self.initialized:
             raise Exception("Predictor model not initialized")
 
