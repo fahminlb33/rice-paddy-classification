@@ -1,15 +1,14 @@
-from concurrent.futures import process
 import os
 import glob
 import itertools
 
 import numpy as np
-from zmq import DRAFT_API
 
 DRY_RUN = True
+VERBOSE = False
 
-SELECTED_MODE = "absolute"
-PROPORTIONS = [("test", 200), ("validation", 200)]
+#SELECTED_MODE = "absolute"
+#PROPORTIONS = [("test", 200), ("validation", 200)]
 
 SELECTED_MODE = "percentage"
 PROPORTIONS = [("test", 0.1), ("validation", 0.1)]
@@ -61,10 +60,13 @@ for current_class, (split_mode, split_proportion) in itertools.product(class_nam
         if current_class not in file_name:
             continue
 
+        # get the new path
         destination_path = os.path.join(destination_folder, os.path.basename(file_name))
-        #print("Moving {} to {}".format(test_file, destination_path))
 
-        if DRY_RUN:
+        if VERBOSE:
+            print("Moving {} to {}".format(file_name, destination_path))
+
+        if not DRY_RUN:
             os.rename(file_name, destination_path)
 
         processed_paths.append(file_name)
