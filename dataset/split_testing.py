@@ -1,46 +1,81 @@
+from concurrent.futures import process
 import os
 import glob
+import itertools
 
 import numpy as np
+from zmq import DRAFT_API
 
+DRY_RUN = True
 
-mode_percentages = [("test", 0.1), ("validation", 0.1)]
-class_names = ["Bacterialblight", "Blast", "Brownspot", "Tungro", "Healthy"]
+SELECTED_MODE = "absolute"
+PROPORTIONS = [("test", 200), ("validation", 200)]
 
-# count files for each class
-# class_counts = {class_name: len(glob.glob("train/{}/*.jpg".format(class_name))) for class_name in class_names}
-# print(class_counts)
+SELECTED_MODE = "percentage"
+PROPORTIONS = [("test", 0.1), ("validation", 0.1)]
 
-for current_class in class_names:
-    # get files for current class
-    current_files = glob.glob("train/{}/*.*".format(current_class))
-    total_original_files = len(current_files)
-    
-    # select take_test number of random element from current_files
-    np.random.shuffle(current_files)
+# define class names
+class_names = [os.path.basename(path[:-1]) for path in glob.glob("dataset/train/*/")]
+print("")
+print("Detected classes:", len(class_names))
+print("Classes:", ", ".join(class_names))
+print("")
 
-    for mode, percentage in mode_percentages:
-        take_count = int(total_original_files * percentage)
-        selected_files = current_files[:take_count]
-        count = 0
+# get all files
+all_files = glob.glob("dataset/train/*/*.*")
+class_counts = {class_name: sum(1 for file_name in all_files if class_name in file_name) for class_name in class_names}
+print("Sample distribution per class:")
+for class_name in class_names:
+    print(f"  - {class_name:17} : {class_counts[class_name]}")
+print("")
 
-        # create a new folder for test files
-        destination_folder = "{}/{}".format(mode, current_class)
-        if not os.path.exists(destination_folder):
-            os.makedirs(destination_folder)
+# randomize files
+np.random.shuffle(all_files)
 
-        # move test files to test folder
-        for test_file in selected_files:
-            destination_path = os.path.join(destination_folder, os.path.basename(test_file))
-            #print("Moving {} to {}".format(test_file, destination_path))
+# process all files
+for current_class, (split_mode, split_proportion) in itertools.product(class_names, PROPORTIONS):
+    # print report
+    print(f"Processing: {split_mode} {current_class}  ...", end=" ")
 
-            os.rename(test_file, destination_path)
-            count += 1
+    # count how many files to take
+    take_count = 0
+    if SELECTED_MODE == "absolute":
+        take_count = split_proportion
+    else:
+        take_count = int(split_proportion * class_counts[current_class])
 
-        # remove moved files
-        current_files = [file for file in current_files if file not in selected_files]
+    # create a new folder for test files
+    destination_folder = "{}/{}".format(split_mode, current_class)
+    if not os.path.exists(destination_folder):
+        os.makedirs(destination_folder)
 
-        # print total moved
-        print("Mode: {}".format(mode))
-        print("Class: {}".format(current_class))
-        print("Total moved: {}\n".format(count))
+    # move files
+    processed_count = 0
+    processed_paths = []
+    for file_name in all_files:
+        # check if we have taken enough data
+        if processed_count >= take_count:
+            break
+
+        # check if the path contains the current class
+        if current_class not in file_name:
+            continue
+
+        destination_path = os.path.join(destination_folder, os.path.basename(file_name))
+        #print("Moving {} to {}".format(test_file, destination_path))
+
+        if DRY_RUN:
+            os.rename(file_name, destination_path)
+
+        processed_paths.append(file_name)
+        processed_count += 1
+
+    # print report
+    print(processed_count, " OK!")
+
+    # remove processed files
+    all_files = [file_name for file_name in all_files if file_name not in processed_paths]
+
+# print done
+print("")
+print("DONE!")
