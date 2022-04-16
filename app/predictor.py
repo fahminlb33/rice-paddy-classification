@@ -22,7 +22,7 @@ class PredictorService:
     logger: logging.Logger
 
     def __init__(self) -> None:
-        logger = logging.getLogger("PredictorService")
+        self.logger = logging.getLogger("PredictorService")
 
     def load_model(self, model_root: str, tf_name: str, class_name: str) -> None:
         # create model path using absolute path
