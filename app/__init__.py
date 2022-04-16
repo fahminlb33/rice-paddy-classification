@@ -2,9 +2,6 @@ import os
 import logging
 from logging.config import dictConfig
 
-# disable tensorflow logging
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
 from app.common_helpers import logging_config
 
 # initialize logger
