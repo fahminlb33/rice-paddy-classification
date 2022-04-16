@@ -1,33 +1,47 @@
-from logging.config import dictConfig
-
 # create formatter
 logging_config = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "default_formatter": {
+        "default": {
             "()": "uvicorn.logging.DefaultFormatter",
-            "fmt": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-            "datefmt": "%Y-%m-%d %H:%M:%S",
+            "fmt": "%(levelname)s:\t%(name)s - %(message)s",
+            "use_colors": True
+        },
+        "access": {
+            "()": "uvicorn.logging.AccessFormatter",
+            "fmt": "%(levelname)s:\t%(name)s - %(message)s",
         }
     },
     "handlers": {
-        "console": {
-            "formatter": "default_formatter",
+        "default": {
+            "formatter": "default",
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stderr"
+        },
+        "access": {
+            "formatter": "access",
             "class": "logging.StreamHandler",
             "stream": "ext://sys.stdout"
         }
     },
     "loggers": {
         "": {
-            "handlers": ["console"],
-            "level": "DEBUG"
+            "level": "INFO",
+            "handlers": ["default"]
+        },
+        "uvicorn.error": {
+            "level": "INFO",
+            "handlers": ["default"],
+            "propagate": False
+        },
+        "uvicorn.access": {
+            "level": "INFO",
+            "handlers": ["default"],
+            "propagate": False
         }
     },
 }
-
-def init_logger():
-    dictConfig(logging_config)
 
 def is_file_allowed(file_extension: str) -> bool:
     return file_extension.lower() in [".jpg", ".jpeg", ".jfif", ".pjpeg", ".pjp", ".png"]

@@ -1,5 +1,15 @@
 import os
 import logging
+from logging.config import dictConfig
+
+# disable tensorflow logging
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
+from app.common_helpers import logging_config
+
+# initialize logger
+dictConfig(logging_config)
+logger = logging.getLogger("main")
 
 import aiofiles
 from fastapi import FastAPI, Request, UploadFile
@@ -8,18 +18,15 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from app.predictor import PredictorService
-from app.common_helpers import init_logger, is_file_allowed
-
-# initialize logger
-init_logger()
-logger = logging.getLogger("main")
+from app.common_helpers import is_file_allowed
 
 # get model name
 MODEL_FILENAME = os.environ.get("MODEL_NAME", "tensorflow.h5")
 CLASS_FILENAME = os.environ.get("CLASS_NAME", "class_names.z")
 
-logger.debug(f"MODEL_FILENAME: {MODEL_FILENAME}")
-logger.debug(f"CLASS_FILENAME: {CLASS_FILENAME}")
+logger.info("Environment variables:")
+logger.info(f"MODEL_FILENAME: {MODEL_FILENAME}")
+logger.info(f"CLASS_FILENAME: {CLASS_FILENAME}")
 
 # get base directory relative to this file
 base_directory = os.path.dirname(os.path.abspath(__file__))
@@ -36,6 +43,7 @@ predictor_model.load_model(model_path, MODEL_FILENAME, CLASS_FILENAME)
 
 # init fastapi
 app = FastAPI()
+app.logger = logger
 
 # init templates
 templates = Jinja2Templates(directory=template_path)
@@ -93,7 +101,6 @@ async def prediction_route(request: Request, file: UploadFile):
     (prediction, heatmap_path, superimposed_path, masked_path) \
         = predictor_model.predict(resized_path, temp_path)
 
-    logger.info(f"Prediction: {prediction}")
     return templates.TemplateResponse("prediction.html", {
         "request": request,
         "predicted": prediction,
