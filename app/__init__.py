@@ -2,11 +2,12 @@ import os
 import logging
 from logging.config import dictConfig
 
+
 from app.common_helpers import logging_config
 
 # initialize logger
+logger = logging.getLogger()
 dictConfig(logging_config)
-logger = logging.getLogger("main")
 
 import aiofiles
 from fastapi import FastAPI, Request, UploadFile

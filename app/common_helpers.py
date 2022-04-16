@@ -26,10 +26,6 @@ logging_config = {
         }
     },
     "loggers": {
-        "": {
-            "level": "INFO",
-            "handlers": ["default"]
-        },
         "uvicorn.error": {
             "level": "INFO",
             "handlers": ["default"],
@@ -41,6 +37,10 @@ logging_config = {
             "propagate": False
         }
     },
+    "root": {
+        "level": "INFO",
+        "handlers": ["default"]
+    }
 }
 
 def is_file_allowed(file_extension: str) -> bool:
