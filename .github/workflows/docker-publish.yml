@@ -51,10 +51,15 @@ jobs:
             MODEL_NAME=${{ env.MODEL_NAME }}
             CLASS_NAME=${{ env.CLASS_NAME }}
       
-      - uses: actions/delete-package-versions@v3
+      - name: Delete old images
+        uses: snok/container-retention-policy@v1
         with:
-          package-name: skripsi
-          min-versions-to-keep: 2
+          image-names: skripsi
+          cut-off: 1 day ago UTC
+          timestamp-to-use: created_at
+          account-type: personal
+          token: ${{ secrets.GITHUB_TOKEN }}
+          keep-at-least: 1
 
   deploy:
     runs-on: ubuntu-latest
