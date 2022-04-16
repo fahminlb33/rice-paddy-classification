@@ -8,12 +8,15 @@ IMAGE_NAME=skripsi
 IMAGE_FULLNAME=${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
 
 # Directives
-.PHONY: run docker-build docker-run docker-stop docker-rm
+.PHONY: run debug docker-build docker-run docker-stop docker-rm
 
 .DEFAULT_GOAL := docker-run
 
 # Commands
 run:
+	MODEL_NAME="../../${MODEL_NAME}" CLASS_NAME="../../${CLASS_NAME}" uvicorn app:app --port 8080
+
+debug:
 	MODEL_NAME="../../${MODEL_NAME}" CLASS_NAME="../../${CLASS_NAME}" uvicorn app:app --port 8080 --reload
 
 docker-build:
