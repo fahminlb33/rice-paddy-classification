@@ -14,14 +14,14 @@ SELECTED_MODE = "percentage"
 PROPORTIONS = [("test", 0.1), ("validation", 0.1)]
 
 # define class names
-class_names = [os.path.basename(path[:-1]) for path in glob.glob("dataset/train/*/")]
+class_names = [os.path.basename(path[:-1]) for path in glob.glob("train/*/")]
 print("")
 print("Detected classes:", len(class_names))
 print("Classes:", ", ".join(class_names))
 print("")
 
 # get all files
-all_files = glob.glob("dataset/train/*/*.*")
+all_files = glob.glob("train/*/*.*")
 class_counts = {class_name: sum(1 for file_name in all_files if class_name in file_name) for class_name in class_names}
 print("Sample distribution per class:")
 for class_name in class_names:
