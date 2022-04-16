@@ -15,11 +15,11 @@ logging_config = {
         "console": {
             "formatter": "default_formatter",
             "class": "logging.StreamHandler",
-            "stream": "ext://sys.stderr"
+            "stream": "ext://sys.stdout"
         }
     },
     "loggers": {
-        "skripsi_logger": {
+        "": {
             "handlers": ["console"],
             "level": "DEBUG"
         }
