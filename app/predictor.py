@@ -95,10 +95,7 @@ class PredictorService:
 
     def superimpose(self, original_img: np.ndarray, heatmap: np.ndarray, alpha=0.4) -> np.ndarray:
         # apply heatmap on top of original image
-        result = heatmap * alpha + original_img
-        result = result.astype(np.uint8)
-
-        return result
+        return heatmap * alpha + original_img
 
     def mask_superimpose(self, original_img: np.ndarray, heatmap: np.ndarray) -> np.ndarray:
         # median thresholding
