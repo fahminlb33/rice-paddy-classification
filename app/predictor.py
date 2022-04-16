@@ -37,6 +37,7 @@ class PredictorService:
     def constrain_image_size(self, img_path: str) -> str:
         # load image
         img = imread(img_path)
+        self.logger.info(f"Original image shape: {img.shape}")
 
         # check if image is too large
         if img.shape[0] <= self.MAX_HEIGHT:
@@ -47,14 +48,15 @@ class PredictorService:
         dim = (self.MAX_HEIGHT, int(aspect_ratio * self.MAX_HEIGHT))
 
         # resize image
-        img = resize(img, dim)
+        img_resized = resize(img, dim, preserve_range=True).astype(np.uint8)
 
         # save image
         new_name = os.path.splitext(img_path)[0] + "_resized.jpg"
-        new_path = os.path.join(os.path.dirname(img_path), new_name)        
-        imsave(new_path, img)
+        output_path = os.path.join(os.path.dirname(img_path), new_name)        
+        imsave(output_path, img_resized)
 
-        return new_path
+        self.logger.info(f"Constrained image shape: {img_resized.shape}")
+        return output_path
 
     def create_gradcam_matrix(self, img_array: np.ndarray, last_conv_layer_name="Conv_1") -> np.ndarray:
         # create model to output the last convolutional layer
@@ -126,12 +128,14 @@ class PredictorService:
         prediction = self.tf_model.predict(image_tensor)
         prediction = tf.nn.softmax(prediction)
         prediction = tf.argmax(prediction, axis=1)
+        prediction_class = self.class_names[prediction[0]]
 
         # run Grad-CAM algorithm
         gradcam = self.create_gradcam_matrix(image_tensor)
         gradcam = np.uint8(255 * gradcam)
 
-        return (prediction[0], gradcam)
+        self.logger.info(f"Predicted: {prediction_class}")
+        return (prediction_class, gradcam)
 
     def predict(self, image_path: str, output_path: str) -> Tuple[str, str, str, str]:
         if not self.initialized:
@@ -146,6 +150,7 @@ class PredictorService:
         original_img = load_img(image_path)
         original_img = img_to_array(original_img)
         image_size = (original_img.shape[0], original_img.shape[1])
+        self.logger.info(f"Image size: {image_size}")
 
         # create base heatmap using colormap
         self.logger.info(f"Creating heatmap from Grad-CAM...")
@@ -169,7 +174,7 @@ class PredictorService:
         masked_img.save(masked_path)
 
         return (
-            self.class_names[predicted],
+            predicted,
             heatmap_path,
             superimposed_path,
             masked_path
