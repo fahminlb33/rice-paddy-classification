@@ -1,3 +1,6 @@
+import os
+import sys
+
 # create formatter
 logging_config = {
     "version": 1,
@@ -5,24 +8,25 @@ logging_config = {
     "formatters": {
         "default": {
             "()": "uvicorn.logging.DefaultFormatter",
-            "fmt": "%(levelname)s:\t%(name)s - %(message)s",
-            "use_colors": True
-        },
-        "access": {
-            "()": "uvicorn.logging.AccessFormatter",
-            "fmt": "%(levelname)s:\t%(name)s - %(message)s",
+            "fmt": "%(levelname)s:\t%(name)s - %(message)s"
         }
     },
     "handlers": {
         "default": {
             "formatter": "default",
             "class": "logging.StreamHandler",
-            "stream": "ext://sys.stderr"
+            "stream": sys.stderr
         },
         "access": {
-            "formatter": "access",
+            "formatter": "default",
             "class": "logging.StreamHandler",
-            "stream": "ext://sys.stdout"
+            "stream": sys.stdout
+        },
+        "azure": {
+            "level": "DEBUG",
+            "formatter": "default",
+            "class": "opencensus.ext.azure.log_exporter.AzureLogHandler",
+            "connection_string": os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING", "InstrumentationKey=00000000-0000-0000-0000-000000000000")
         }
     },
     "loggers": {
@@ -33,13 +37,13 @@ logging_config = {
         },
         "uvicorn.access": {
             "level": "INFO",
-            "handlers": ["default"],
+            "handlers": ["default", "azure"],
             "propagate": False
         }
     },
     "root": {
         "level": "INFO",
-        "handlers": ["default"]
+        "handlers": ["default", "azure"]
     }
 }
 
