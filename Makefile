@@ -1,4 +1,5 @@
 # Variables
+TF_LOG_LEVEL=2
 MODEL_NAME=deploy/mobilenet-20220326-151658.h5
 CLASS_NAME=deploy/class_names-20220326-151658.z
 
@@ -14,10 +15,16 @@ IMAGE_FULLNAME=${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
 
 # Commands
 run:
-	MODEL_NAME="../../${MODEL_NAME}" CLASS_NAME="../../${CLASS_NAME}" uvicorn app:app --port 8080
+	MODEL_NAME="../../${MODEL_NAME}" \
+	CLASS_NAME="../../${CLASS_NAME}" \
+	TF_CPP_MIN_LOG_LEVEL=${TF_LOG_LEVEL} \
+	uvicorn app:app --port 8080
 
 debug:
-	MODEL_NAME="../../${MODEL_NAME}" CLASS_NAME="../../${CLASS_NAME}" uvicorn app:app --port 8080 --reload
+	MODEL_NAME="../../${MODEL_NAME}" \
+	CLASS_NAME="../../${CLASS_NAME}" \
+	TF_CPP_MIN_LOG_LEVEL=${TF_LOG_LEVEL} \
+	uvicorn app:app --port 8080 --reload
 
 docker-build:
 	docker build --build-arg MODEL_NAME="${MODEL_NAME}" --build-arg CLASS_NAME="${CLASS_NAME}" -t ${IMAGE_FULLNAME} .
