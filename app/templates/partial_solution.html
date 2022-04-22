@@ -1,0 +1,76 @@
+{% if predicted == 'BACTERIALBLIGHT' %}
+<p>
+  <b>Bacterial blight (hawar padi)</b>, penyakit ini disebabkan oleh <i>Xanthomonas oryzae pv.</i> dan merupakan salah
+  satu penyakit utama yang menyerang tanaman padi (BBPadi, 2015). Padi yang terinfeksi bakteri ini akan menyebabkan daun
+  padi menguning pada tepi daun yang menyebabkan tanaman menjadi layu dan akhirnya mati, gejala ini disebut sebagai
+  <i>kresek</i>.
+</p>
+
+<b>Kendali Hama</b>
+<ul class="mt-0">
+  <li>Manajemen sanitasi irigasi dan batang padi merupakan salah satu metode yang efektif untuk mengurangi inokulasi bakteri dari biji padi.</li>
+  <li>Penggunaan varietas padi yang telah divaksinasi dari bakteri ini dapat lebih lanjut mencegah infeksi bakteri.</li>
+  <li>Penggunaan pestisida dapat digunakan tetapi tidak ditemukan efektivitas yang baik dan terdapat beberapa bukti adanya toksisitas pada mamalia.</li>
+</ul>
+{% endif %}
+
+{% if predicted == 'BROWNSPOT' %}
+<p>
+  <b>Brown spot (bercak daun)</b>, penyakit ini dapat diidentifikasi dengan munculnya bercak cokelat pada batang daun
+  padi yang biasanya disebabkan oleh kurangnya unsur hara pada tanah utamanya unsur kalium dan tercatat dapat
+  menyebabkan kerugian hasil panen mulai dari 50 hingga 90 persen (Herlisa, 2022). Penyebab lain dari penyakit ini
+  adalah infeksi jamur <i>Helminthosporium oryzae</i> yang bisa menginfeksi batang daun padi hingga gabah dan beras sehingga
+  menyebabkan padi tidak dapat dikonsumsi (Mew dkk., 2018).
+</p>
+
+<b>Kendali Hama</b>
+<ul class="mt-0">
+  <li>Mengkultivasi padi yang telah divaksinasi merupakan salah satu cara paling efektif untuk mencegah penyakit ini.</li>
+  <li>Sanitasi irigasi dan pembakaran sisa batang padi setelah panen dapat mengurangi tumbuhnya jamur pada lahan sawah.</li>
+</ul>
+{% endif %}
+
+{% if predicted == 'BLAST' %}
+<p>
+  <b>Blast (busuk leher)</b>, merupakan penyakit yang disebabkan oleh jamur <i>Pyricularia grisea</i> (Mew dkk., 2018). Saat
+  penyakit ini menyerang batang padi, maka batang dapat berubah menjadi cokelat dan kemudian membusuk. Apabila tanaman
+  padi dapat bertahan dan menghasilkan gabah, maka jamur ini juga dapat menginfeksi gabah dan akhirnya menyebar ke
+  tanaman padi baru melalui bibit yang terinfeksi. Penyakit blas juga memiliki ciri yang mirip seperti bercak daun,
+  perbedaannya adalah pada infeksi blas titik tengah bercak padi berwarna putih dan bukan berwarna cokelat.
+</p>
+
+<b>Kendali Hama</b>
+<ul class="mt-0">
+  <li>Menggunakan fungisida untuk menekan pertumbuhan jamur.</li>
+  <li>Mengkultivasi padi yang telah divaksinasi untuk mencegah penyakit ini.</li>
+</ul>
+{% endif %}
+
+{% if predicted == 'TUNGRO' %}
+<p>
+  <b>Tungro</b>, penyakit ini disebabkan oleh dua virus yaitu rice <i>tungro spherical virus (RTSV)</i>
+  dan <i>rice tungro bacilliform virus (RTBV)</i>. Virus ini bisa ditularkan melalui serangga, khususnya
+  wereng hijau. Tanaman padi yang terinfeksi tungro akan menampilkan gejala seperti daun yang menguning
+  dan melintir dan pertumbuhan padi menjadi terhambat dan tanaman menjadi kerdil atau ruas memendek (Hendri, 2020).
+</p>
+
+<b>Kendali Hama</b>
+<ul class="mt-0">
+  <li>Penggunan insektisida dapat membantu menekan persebaran serangga vektor penyakit tungro.</li>
+  <li>Metode kultivasi menggunakan varietas padi yang resisten terhadap virus tungro dan jadwal penanaman yang terkontrol.</li>
+  <li>Rotasi penanaman antara padi dan palawija lain dapat membantu menekan populasi tungro.</li>
+</ul>
+{% endif %}
+
+{% if predicted == 'HEALTHY' %}
+<p>
+  <b>Padi</b> yang sehat memiliki warna batang daun yang hijau dengan jumlah anakan padi yang cukup (25/rumpun). Selain itu, akar padi yang berwarna putih juga merupakan salah satu indikator padi yang sehat.
+</p>
+
+<b>Kultivasi Padi</b>
+<ul class="mt-0">
+  <li>Melakukan pemupukan dengan dosis dan jadwal yang tepat.</li>
+  <li>Menggunakan metode kontrol hama seperti pestisida sesuai aturan.</li>
+  <li>Penanaman <i>refugia</i> sebagai mikrohabitat buatan dapat membantu menekan parasit dan predator alami padi.</li>
+</ul>
+{% endif %}

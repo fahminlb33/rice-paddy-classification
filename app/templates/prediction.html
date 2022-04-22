@@ -1,4 +1,4 @@
-{% extends 'partial_layout.html' %}
+{% extends '_layout.html' %}
 {% block content %}
 <!-- Main Card Content -->
 <div class="card">
@@ -6,15 +6,14 @@
   <div class="card-image">
     <div class="columns is-gapless">
       <div class="column">
-        <p class="has-text-centered has-text-weight-medium my-2">Citra Asli</p>
         <a href="{{ url_for('temp', path=original_image) }}" data-lightbox="original-image" data-title="Citra Asli">
           <figure class="image is-5by3">
             <img src="{{ url_for('temp', path=original_image) }}" alt="Origial image">
           </figure>
         </a>
+        <p class="has-text-centered has-text-weight-medium mt-2">Citra Asli</p>
       </div>
       <div class="column">
-        <p class="has-text-centered has-text-weight-medium my-2">Citra Grad-CAM</p>
         <a href="{{ url_for('temp', path=superimposed_image) }}" data-lightbox="predicted-image" data-title="Citra Grad-CAM">
           <figure class="image is-5by3">
             <img src="{{ url_for('temp', path=superimposed_image) }}" alt="Predicted image">
@@ -22,6 +21,7 @@
         </a>
         <a href="{{ url_for('temp', path=masked_image) }}" data-lightbox="predicted-image" data-title="Citra Asli dipotong Heatmap"></a>
         <a href="{{ url_for('temp', path=heatmap_image) }}" data-lightbox="predicted-image" data-title="Citra Heatmap"></a>
+        <p class="has-text-centered has-text-weight-medium mt-2">Citra Grad-CAM</p>
       </div>
     </div>
 
@@ -31,27 +31,26 @@
 
   <!-- Main Content -->
   <div class="card-content">
-    <!-- Header Title -->
-    {% include 'partial_title.html' %}
-    <!-- End Header Title -->
-
-    <!-- Form -->
     <div class="content">
-      <form action="/prediction" method="post" enctype="multipart/form-data">
-        <!-- Result -->
-        <p class="has-text-centered mb-1">Hasil Prediksi:</p>
-        <p
-          class="has-text-centered is-size-1 is-uppercase has-text-weight-semibold mb-5 {{ background_css }}">
-          {{ predicted }}
-        </p>
-        <!-- End Result -->
+      <!-- Bagin Result -->
+      <p
+        class="has-text-centered is-size-1 is-uppercase has-text-weight-semibold mb-5 {{ background_css }}">
+        {{ predicted }}
+      </p>
+      <!-- End Result -->
 
-        <!-- Submit Button -->
-        <a class="button is-large is-fullwidth is-link" href="/">&larr; Kembali</a>
-        <!-- End Submit Button -->
-      </form>
+      <!-- Begin Solution -->
+      {% include 'partial_classify_proba.html' %}
+      <!-- End Solution -->
+
+      <!-- Begin Solution -->
+      {% include 'partial_solution.html' %}
+      <!-- End Solution -->
+
+      <!-- Back Button -->
+      <a class="button is-large is-fullwidth is-link" href="/">&larr; Kembali</a>
+      <!-- End Back Button -->
     </div>
-    <!-- End Form -->
   </div>
   <!-- End Main Content -->
 </div>

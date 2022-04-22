@@ -1,0 +1,8 @@
+<p>
+  <b>Probabilitas Klasifikasi</b><br>
+  {% for (css_class, pred_class, proba) in probabilities %}
+    <span class="tag {{ css_class }}">
+      {{ pred_class }}: {{ proba }}
+    </span>
+  {% endfor %}
+</p>
