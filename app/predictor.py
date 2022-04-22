@@ -22,7 +22,7 @@ class PredictorService:
     logger: logging.Logger
 
     def __init__(self) -> None:
-        self.logger = logging.getLogger("PredictorService")
+        self.logger = logging.getLogger(__name__)
 
     def load_model(self, model_root: str, tf_name: str, class_name: str) -> None:
         # create model path using absolute path
@@ -127,15 +127,14 @@ class PredictorService:
         # predict
         prediction = self.tf_model.predict(image_tensor)
         prediction = tf.nn.softmax(prediction)
-        prediction = tf.argmax(prediction, axis=1)
-        prediction_class = self.class_names[prediction[0]]
+        prediction = prediction.numpy().ravel() * 100
 
         # run Grad-CAM algorithm
         gradcam = self.create_gradcam_matrix(image_tensor)
         gradcam = np.uint8(255 * gradcam)
 
-        self.logger.info(f"Predicted: {prediction_class}")
-        return (prediction_class, gradcam)
+        self.logger.info(f"Predicted: {prediction}")
+        return (prediction, gradcam)
 
     def predict(self, image_path: str, output_path: str) -> Tuple[str, str, str, str]:
         if not self.initialized:
@@ -179,3 +178,9 @@ class PredictorService:
             superimposed_path,
             masked_path
         )
+    
+    def get_most_likely_class(self, prediction: np.ndarray) -> str:
+        return self.class_names[np.argmax(prediction)].strip().upper()
+
+    def get_class_from_prediction(self, index: int) -> str:
+        return self.class_names[index].strip().upper()
