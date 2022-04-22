@@ -1,4 +1,3 @@
-import os
 import sys
 
 # create formatter
@@ -21,12 +20,6 @@ logging_config = {
             "formatter": "default",
             "class": "logging.StreamHandler",
             "stream": sys.stdout
-        },
-        "azure": {
-            "level": "DEBUG",
-            "formatter": "default",
-            "class": "opencensus.ext.azure.log_exporter.AzureLogHandler",
-            "connection_string": os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING", "InstrumentationKey=00000000-0000-0000-0000-000000000000")
         }
     },
     "loggers": {
@@ -37,13 +30,13 @@ logging_config = {
         },
         "uvicorn.access": {
             "level": "INFO",
-            "handlers": ["default", "azure"],
+            "handlers": ["default"],
             "propagate": False
         }
     },
     "root": {
         "level": "INFO",
-        "handlers": ["default", "azure"]
+        "handlers": ["default"]
     }
 }
 
