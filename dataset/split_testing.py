@@ -3,15 +3,16 @@ import glob
 import itertools
 
 import numpy as np
+np.random.seed(0)
 
-DRY_RUN = True
+DRY_RUN = False
 VERBOSE = False
 
-#SELECTED_MODE = "absolute"
-#PROPORTIONS = [("test", 200), ("validation", 200)]
+# SELECTED_MODE = "absolute"
+# PROPORTIONS = [("test", 200), ("validation", 200)]
 
 SELECTED_MODE = "percentage"
-PROPORTIONS = [("test", 0.1), ("validation", 0.1)]
+PROPORTIONS = [("test", 0.15), ("validation", 0.15)]
 
 # define class names
 class_names = [os.path.basename(path[:-1]) for path in glob.glob("train/*/")]
