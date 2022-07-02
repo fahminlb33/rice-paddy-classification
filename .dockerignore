@@ -1,8 +1,11 @@
 .editorconfig
 .gitignore
 conda-env.yaml
+reqs.txt
 
 model
 dataset
 notebooks
 __pycache__
+mlruns
+temp
