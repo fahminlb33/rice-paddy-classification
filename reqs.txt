@@ -1,0 +1,18 @@
+tensorflow-gpu
+scikit-learn
+matplotlib
+numpy
+joblib
+mlflow
+python-multipart
+uvicorn
+fastapi
+aiofiles
+jinja2
+joblib
+matplotlib
+scikit-image
+jupyter
+pydot
+
+CONDA_OVERRIDE_CUDA=11.2 mamba create -n skripsi tensorflow-gpu scikit-learn matplotlib numpy joblib mlflow python-multipart uvicorn fastapi aiofiles jinja2 joblib matplotlib scikit-image jupyter

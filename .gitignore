@@ -186,3 +186,10 @@ app/temp/*
 
 # VSCode Settings
 .vscode/
+
+# MLflow Runs
+mlruns
+
+# Binary models
+*.z
+*.h5
