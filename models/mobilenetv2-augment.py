@@ -35,6 +35,9 @@ tf.random.set_seed(RANDOM_SEED)
 
 # image preprocessing
 def preprocess_images(ds, augment=False, shuffle=False):
+    # get preprocess layer
+    preprocess_input = tf.keras.applications.mobilenet_v2.preprocess_input
+
     if augment:
         ds = ds.map(lambda x, y: (data_augmentation(x, training=True), y), num_parallel_calls=tf.data.AUTOTUNE)
 
@@ -94,9 +97,6 @@ if __name__ == "__main__":
         # save sample dataset
         dataset_samples_fig = display_dataset_sample(train_dataset, class_names)
         mlflow.log_figure(dataset_samples_fig, "dataset_samples.png")
-
-        # get preprocess layer
-        preprocess_input = tf.keras.applications.mobilenet_v2.preprocess_input
 
         # create augmentation layer
         data_augmentation = tf.keras.Sequential([

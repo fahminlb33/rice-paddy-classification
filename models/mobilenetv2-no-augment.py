@@ -36,6 +36,9 @@ tf.random.set_seed(RANDOM_SEED)
 
 # image preprocessing
 def preprocess_images(ds, shuffle=False):
+    # get preprocess layer
+    preprocess_input = tf.keras.applications.mobilenet_v2.preprocess_input
+    
     if shuffle:
         ds = ds.shuffle(buffer_size=1024)
 
@@ -92,9 +95,6 @@ if __name__ == "__main__":
         # save sample dataset
         dataset_samples_fig = display_dataset_sample(train_dataset, class_names)
         mlflow.log_figure(dataset_samples_fig, "dataset_samples.png")
-
-        # get preprocess layer
-        preprocess_input = tf.keras.applications.mobilenet_v2.preprocess_input
 
         # downloas base model
         base_model = tf.keras.applications.MobileNetV2(input_shape=IMG_SHAPE, include_top=False, weights='imagenet')
