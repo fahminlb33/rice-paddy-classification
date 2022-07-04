@@ -9,20 +9,25 @@ IMAGE_NAME=skripsi
 IMAGE_FULLNAME=${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
 
 # Directives
-.PHONY: run debug docker-build docker-run docker-stop docker-rm
+.PHONY: download run debug docker-build docker-run docker-stop docker-rm
 
 .DEFAULT_GOAL := docker-run
 
 # Commands
-run:
-	MODEL_URL="../../${MODEL_URL}" \
-	CLASS_NAMES_URL="../../${CLASS_NAMES_URL}" \
+download:
+	curl -L -o model.h5 ${MODEL_URL}
+	curl -L -o class_names.z ${CLASS_NAMES_URL}
+	echo "Model and class names downloaded"
+
+run: download
+	MODEL_NAME="model.h5" \
+	CLASS_NAME="class_names.z" \
 	TF_CPP_MIN_LOG_LEVEL=${TF_LOG_LEVEL} \
 	uvicorn app:app --port 8080
 
-debug:
-	MODEL_URL="../../${MODEL_URL}" \
-	CLASS_NAMES_URL="../../${CLASS_NAMES_URL}" \
+debug: download
+	MODEL_NAME="model.h5" \
+	CLASS_NAME="class_names.z" \
 	TF_CPP_MIN_LOG_LEVEL=${TF_LOG_LEVEL} \
 	uvicorn app:app --port 8080 --reload
 
