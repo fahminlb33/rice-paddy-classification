@@ -17,18 +17,14 @@ import mlflow.tensorflow
 from training_params import BATCH_SIZE, RANDOM_SEED, IMG_SIZE, IMG_SHAPE, EPOCHS, LEARNING_RATE, clean_temp_dir
 
 # mlflow tracking
+RUN_NAME = "Finalized model"
+EXPERIMENT_NAME = "mobilenetv2-augment"
+
 # mlflow.set_tracking_uri("http://localhost:5000")
+mlflow.set_experiment(EXPERIMENT_NAME)
 mlflow.tensorflow.autolog()
 
-EXPERIMENT_NAME = "mobilenetv2-augment"
-EXPERIMENT_ID = mlflow.get_experiment_by_name(EXPERIMENT_NAME)
-if EXPERIMENT_ID is None:
-    EXPERIMENT_ID = mlflow.create_experiment(EXPERIMENT_NAME)
-else:
-    EXPERIMENT_ID = EXPERIMENT_ID.experiment_id
-
-STARTED_TIMESTAMP = datetime.now().strftime("%Y%m%d-%H%M%S")
-
+# Set seed
 random.seed(RANDOM_SEED)
 np.random.seed(RANDOM_SEED)
 tf.random.set_seed(RANDOM_SEED)
@@ -74,7 +70,7 @@ def display_augmented(ds, augmentation_model):
 
 if __name__ == "__main__":
     clean_temp_dir()
-    with mlflow.start_run(experiment_id=EXPERIMENT_ID, run_name="final"):
+    with mlflow.start_run(run_name=RUN_NAME):
         dataset_kwargs = {
             "label_mode": "categorical",
             "seed": RANDOM_SEED,

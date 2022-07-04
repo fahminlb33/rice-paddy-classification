@@ -1,11 +1,11 @@
 import time
 import random
-from datetime import datetime
 
 import mlflow
 
 import joblib
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 from sklearn.metrics import classification_report, accuracy_score, f1_score
@@ -17,18 +17,14 @@ import mlflow.tensorflow
 from training_params import BATCH_SIZE, RANDOM_SEED, IMG_SIZE, IMG_SHAPE, EPOCHS, LEARNING_RATE, clean_temp_dir
 
 # mlflow tracking
+RUN_NAME = "Finalized model"
+EXPERIMENT_NAME = "baseline-amiril-no-augment"
+
 # mlflow.set_tracking_uri("http://localhost:5000")
+mlflow.set_experiment(EXPERIMENT_NAME)
 mlflow.tensorflow.autolog()
 
-EXPERIMENT_NAME = "baseline-amiril-no-augment"
-EXPERIMENT_ID = mlflow.get_experiment_by_name(EXPERIMENT_NAME)
-if EXPERIMENT_ID is None:
-    EXPERIMENT_ID = mlflow.create_experiment(EXPERIMENT_NAME)
-else:
-    EXPERIMENT_ID = EXPERIMENT_ID.experiment_id
-
-STARTED_TIMESTAMP = datetime.now().strftime("%Y%m%d-%H%M%S")
-
+# Set seed
 random.seed(RANDOM_SEED)
 np.random.seed(RANDOM_SEED)
 tf.random.set_seed(RANDOM_SEED)
@@ -40,7 +36,7 @@ def preprocess_images(ds):
 
 if __name__ == "__main__":
     clean_temp_dir()
-    with mlflow.start_run(experiment_id=EXPERIMENT_ID, run_name="final"):
+    with mlflow.start_run(run_name=RUN_NAME):
         dataset_kwargs = {
             "label_mode": "categorical",
             "seed": RANDOM_SEED,
@@ -150,7 +146,11 @@ if __name__ == "__main__":
         mlflow.log_text(report, "classification_report.txt")
 
         # save training history
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+        df_history = pd.DataFrame(H.history)
+        df_history.index.name = "epoch"
+        mlflow.log_text(df_history.to_csv(), "training_history.csv")
+
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7.5, 3))
         ax1.plot(H.history["loss"], label="Train")
         ax1.plot(H.history["val_loss"], label="Validation")
         ax1.set_xlabel("Epoch #")
@@ -163,6 +163,7 @@ if __name__ == "__main__":
         ax2.set_ylabel("Accuracy")
         ax2.legend(loc="lower left")
 
+        fig.tight_layout()
         mlflow.log_figure(fig, "training_history.png")
 
         # save model
