@@ -15,19 +15,20 @@ IMAGE_FULLNAME=${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG}
 
 # Commands
 download:
-	curl -L -o model.h5 ${MODEL_URL}
-	curl -L -o class_names.z ${CLASS_NAMES_URL}
+	mkdir -p model
+	curl -z -nc -L -o model.h5 ${MODEL_URL}
+	curl -z -nc -L -o class_names.z ${CLASS_NAMES_URL}
 	echo "Model and class names downloaded"
 
 run: download
-	MODEL_NAME="model.h5" \
-	CLASS_NAME="class_names.z" \
+	MODEL_NAME="../../model.h5" \
+	CLASS_NAME="../../class_names.z" \
 	TF_CPP_MIN_LOG_LEVEL=${TF_LOG_LEVEL} \
 	uvicorn app:app --port 8080
 
 debug: download
-	MODEL_NAME="model.h5" \
-	CLASS_NAME="class_names.z" \
+	MODEL_NAME="../../model.h5" \
+	CLASS_NAME="../../class_names.z" \
 	TF_CPP_MIN_LOG_LEVEL=${TF_LOG_LEVEL} \
 	uvicorn app:app --port 8080 --reload
 
