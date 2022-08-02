@@ -17,7 +17,7 @@ import mlflow.tensorflow
 from training_params import BATCH_SIZE, RANDOM_SEED, IMG_SIZE, IMG_SHAPE, EPOCHS, LEARNING_RATE, clean_temp_dir
 
 # mlflow tracking
-RUN_NAME = "Finalized model"
+RUN_NAME = "Save training history"
 EXPERIMENT_NAME = "baseline-amiril-no-augment"
 
 # mlflow.set_tracking_uri("http://localhost:5000")
@@ -165,6 +165,7 @@ if __name__ == "__main__":
 
         fig.tight_layout()
         mlflow.log_figure(fig, "training_history.png")
+        mlflow.log_dict(H.history, "training_history.json")
 
         # save model
         model.save("temp/model.h5")

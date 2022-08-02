@@ -1,8 +1,5 @@
-import os
 import time
 import random
-from datetime import datetime
-from bleach import clean
 
 import mlflow
 
@@ -19,7 +16,7 @@ import mlflow.tensorflow
 from training_params import BATCH_SIZE, RANDOM_SEED, IMG_SIZE, IMG_SHAPE, EPOCHS, LEARNING_RATE, clean_temp_dir
 
 # mlflow tracking
-RUN_NAME = "Finalized model"
+RUN_NAME = "Save training history"
 EXPERIMENT_NAME = "baseline-amiril-augment"
 
 mlflow.set_experiment(EXPERIMENT_NAME)
@@ -196,20 +193,21 @@ if __name__ == "__main__":
         mlflow.log_text(report, "classification_report.txt")
 
         # save training history
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(3.027559, 1.346457))
         ax1.plot(H.history["loss"], label="Train")
         ax1.plot(H.history["val_loss"], label="Validation")
         ax1.set_xlabel("Epoch #")
         ax1.set_ylabel("Loss")
-        ax1.legend(loc="lower left")
+        ax2.legend(loc="upper center", bbox_to_anchor=(0.5, -0.05), ncol=2)
 
         ax2.plot(H.history["accuracy"], label="Train")
         ax2.plot(H.history["val_accuracy"], label="Validation")
         ax2.set_xlabel("Epoch #")
         ax2.set_ylabel("Accuracy")
-        ax2.legend(loc="lower left")
+        ax2.legend(loc="upper center", bbox_to_anchor=(0.5, -0.05), ncol=2)
 
         mlflow.log_figure(fig, "training_history.png")
+        mlflow.log_dict(H.history, "training_history.json")
 
         # save model
         model.save("temp/model.h5")
