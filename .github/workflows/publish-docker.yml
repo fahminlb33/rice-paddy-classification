@@ -1,0 +1,69 @@
+name: Docker Publish
+
+on:
+  push:
+    branches: [ master ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME_NO_REPO: skripsi
+  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_TAG: ${{ github.sha }}
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log into registry ${{ env.REGISTRY }}
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          build-args: |
+            MODEL_URL=${{ secrets.MODEL_URL }}
+            CLASS_NAMES_URL=${{ secrets.CLASS_NAMES_URL }}
+      
+      - name: Delete old images
+        uses: snok/container-retention-policy@v1
+        with:
+          image-names: skripsi
+          cut-off: 1 day ago UTC
+          timestamp-to-use: created_at
+          account-type: personal
+          token: ${{ secrets.CONTAINER_RETENTION_POLICY_TOKEN }}
+          keep-at-least: 1
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: 'ghcr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}'
