@@ -1,20 +1,28 @@
-# Skripsi
+# Rice CNN
 
-[![Aplikasi Web](https://img.shields.io/badge/Akses-Aplikasi-brightgreen)](https://skripsi.kodesiana.com)
-[![Docker Publish](https://github.com/fahminlb33/skripsi/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/fahminlb33/skripsi/actions/workflows/docker-publish.yml)
+> Rice Disease Image Classification using MobileNetV2 Pretrained Model with Attention Visualization using Gradient-weighted Class Activation Mapping (Grad-CAM)
 
-> Klasifikasi Penyakit pada Tumbuhan Padi menggunakan Transfer Learning
-> MobileNetV2 Terbantu Gradient-weighted Class Activation Mapping (Grad-CAM)
+This repository contains the full source code for the paper mentioned above which will be presented in The 6th International Conference on Information and Communications Technology 2023.
 
-Repositori ini berisi kode sumber untuk skripsi saya dengan judul di atas, termasuk *Jupyter Notebook*, arsitektur *deep learning*, dan dataset untuk membangun model klasifikasi citra.
+This repository contains:
 
-Dataset yang digunakan dapat diakses pada:
+1. Jupyter Notebooks used to train the model
+2. Training script with MLflow integration
+3. Useful scripts to perform various tasks such as splitting dataset
+4. Dockerfile to deploy the Flask web app for online classification
+5. (TODO) A static web app to run classification using TensorflowJS
+
+## Model Checkpoints
+
+The pretrained models will be made public in the future.
+
+## Dataset
+
+The dataset used in this research can be accessed via:
 
 - [Rice Leaf Disease Image Samples](https://data.mendeley.com/datasets/fwcj7stb8r/1) (Sethy, 2020)
-- Untuk dataset untuk kelas *healthy* merupakan hasil kurasi mandiri oleh penulis. Untuk mendapatkan akses, Anda bisa hubungi penulis melalui surel ke fahminlb33 [at] gmail [dot] com.
+- For additional dataset used in this research (the **healthy rice** category) you can request the data via email to fahminoorfiqri[at]apps.ipb.ac.id.
 
-Untuk melakukan *modelling* Anda dapat menjalankan kode pada *notebook* `train-mobilenetv2.ipynb` untuk menghasilkan model TensorFlow dan *dictionary* pemetaan kelas hasil prediksi dalam format `joblib`.
+## License
 
-## Continuous Deployment (CI/CD)
-
-Repositori ini telah terintegrasi dengan Github Actions dan Azure App Service sehingga setiap kali ada perubahan pada repositori ini, sistem akan secara otomatis disinkronasi ke server.
+This repository is licensed under Apache License 2.0.
