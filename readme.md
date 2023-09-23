@@ -10,7 +10,7 @@ This repository contains:
 2. Training script with MLflow integration
 3. Useful scripts to perform various tasks such as splitting dataset
 4. Dockerfile to deploy the Flask web app for online classification
-5. (TODO) A static web app to run classification using TensorflowJS
+5. A static web app to run classification using TensorflowJS: [Access here](https://padi.kodesiana.com)
 
 ## Model Checkpoints
 
