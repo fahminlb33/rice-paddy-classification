@@ -17,6 +17,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
+
+      - name: Create model directory
+        working-directory: ./app-tfjs/public
+        run: mkdir -p model
+
+      - name: Download models
+        working-directory: ./app-tfjs/public/model
+        run: curl --remote-name-all '${{ secrets.DOWNLOAD_ROOT }}{group1-shard1of3.bin,group1-shard2of3.bin,group1-shard3of3.bin,model.json}'
       
       - name: Install dependencies
         working-directory: ./app-tfjs
