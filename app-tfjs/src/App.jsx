@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Box, Button, Container, FileButton, Flex, Grid, Image, LoadingOverlay, Tabs, Text, Title } from "@mantine/core";
+import { Button, Container, FileButton, Flex, Grid, Image, LoadingOverlay, Tabs, Text, Title } from "@mantine/core";
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { IconPhoto, IconPhotoFilled, IconPhotoHexagon } from '@tabler/icons-react';
 
@@ -97,9 +97,7 @@ export default function App() {
 
   return (
     <Container className={styles.container_main}>
-       <Box pos="relative">
-        <LoadingOverlay visible={loadingVisible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-      </Box>
+      <LoadingOverlay visible={loadingVisible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
       
       <Title>Padi-CNN: Rice disease classification</Title>
       <Text size='sm'>MobileNetV2-based classifier with Grad-CAM visualization</Text>
@@ -112,7 +110,7 @@ export default function App() {
             {(props) => <Button fullWidth {...props}>Upload</Button>}
           </FileButton>
 
-          <Text mt="xs">Open samples:</Text>
+          <Text mt="xs">Sample images:</Text>
           <Flex gap="sm" wrap="wrap">
             {SAMPLE_IMAGES.map(url => (
               <Image key={url} className={styles.image_thumbnails} src={url} onClick={() => upload(url)} />
@@ -168,7 +166,6 @@ export default function App() {
           </Tabs>
         </Grid.Col>
       </Grid>
-
     </Container>
   )
 }
