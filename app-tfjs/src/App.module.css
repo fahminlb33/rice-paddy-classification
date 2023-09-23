@@ -7,6 +7,11 @@
   margin-top: 2em;
 }
 
+.container_chart {
+  height: 250px;
+  margin-top: 1rem;
+}
+
 .button_upload {
   margin-top: 1em;
   margin-bottom: 1em;
@@ -15,4 +20,18 @@
 .tab_icon {
   width: 24px;
   height: 24px;
+}
+
+.image_original {
+  width: auto;
+  height: 100%;
+  aspect-ratio: 1;
+  object-fit: fill;
+}
+
+.image_thumbnails {
+  width: 47px;
+  height: 47px;
+  aspect-ratio: 1;
+  object-fit: fill;
 }

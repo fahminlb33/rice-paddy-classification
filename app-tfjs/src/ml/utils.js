@@ -1,5 +1,4 @@
 import * as tf from '@tensorflow/tfjs';
-import jimp from 'jimp';
 
 const RGB_COLORMAP = [
   0.2422,   0.1504,  0.6603,   0.25039,   0.165,    0.70761,  0.25777,
@@ -32,6 +31,11 @@ const RGB_COLORMAP = [
   0.9769,   0.9839,  0.0805
 ];
 
+/**
+ * 
+ * @param {tf.Tensor<tf.Rank>} x 
+ * @returns 
+ */
 export function applyColorMap(x) {
   tf.util.assert(
       x.rank === 4, `Expected rank-4 tensor input, got rank ${x.rank}`);
@@ -63,38 +67,28 @@ export function applyColorMap(x) {
         buffer.set(RGB_COLORMAP[3 * row + 2], 0, i, j, 2);
       }
     }
+    
     return buffer.toTensor();
   });
 }
 
-export async function writeImageTensorToFile(imageTensor, filePath) {
-  const imageH = imageTensor.shape[1];
-  const imageW = imageTensor.shape[2];
-  const imageData = imageTensor.dataSync();
+/**
+ * Tensor to Blob with PNG encoding
+ * @param {tf.Tensor<tf.Rank>} imageTensor 
+ * @returns {Promise<Blob>}
+ */
+export async function tensorToBlob(imageTensor) {
+  // create canvas to draw the image
+  const canvas = document.createElement('canvas');
+  canvas.width = imageTensor.shape[2];
+  canvas.height = imageTensor.shape[1];
 
-  const bufferLen = imageH * imageW * 4;
-  const buffer = new Uint8Array(bufferLen);
-  let index = 0;
-  for (let i = 0; i < imageH; ++i) {
-    for (let j = 0; j < imageW; ++j) {
-      const inIndex = 3 * (i * imageW + j);
-      buffer.set([Math.floor(imageData[inIndex])], index++);
-      buffer.set([Math.floor(imageData[inIndex + 1])], index++);
-      buffer.set([Math.floor(imageData[inIndex + 2])], index++);
-      buffer.set([255], index++);
-    }
-  }
+  // convert tensor to image data array
+  const rawImage = imageTensor.squeeze().div(tf.scalar(255));
+  await tf.browser.toPixels(rawImage, canvas);
 
-  return new Promise((resolve, reject) => {
-    new jimp(
-        {data: new Buffer(buffer), width: imageW, height: imageH},
-        (err, img) => {
-          if (err) {
-            reject(err);
-          } else {
-            img.write(filePath);
-            resolve();
-          }
-        });
+  // save as blob
+  return new Promise((resolve) => {
+    canvas.toBlob(resolve, 'image/png')
   });
 }
