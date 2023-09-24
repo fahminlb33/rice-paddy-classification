@@ -21,7 +21,7 @@ The pretrained models will be made public in the future.
 The dataset used in this research can be accessed via:
 
 - [Rice Leaf Disease Image Samples](https://data.mendeley.com/datasets/fwcj7stb8r/1) (Sethy, 2020)
-- For additional dataset used in this research (the **healthy rice** category) you can request the data via email to fahminoorfiqri[at]apps.ipb.ac.id.
+- For additional dataset used in this research (the **healthy rice** category) you can download it [from here](https://blob.kodesiana.com/kodesiana-ai-public/datasets/padiscanner/healthy.zip).
 
 ## License
 
